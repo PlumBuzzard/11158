@@ -28,6 +28,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -41,8 +42,9 @@ public class drive1 extends LinearOpMode{
     DcMotorEx BackLeftmotor;
     DcMotorEx BackRightmotor;
     DcMotorEx Lift1;
+    DcMotorEx Intake;
    // DcMotorEx Lift2;
-
+    DcMotorEx Hang;
 
     //Servos
 
@@ -50,12 +52,16 @@ public class drive1 extends LinearOpMode{
     double servoPosition = 0.0;
     Servo Servo2;
     double ServoPosition = 0.0;
+    Servo Servo3;
+    double Servo_Position = 0.0;
+    Servo Servo4;
+    double ServoPosition_;
 
 
 
     //speed variables
-    double TurnSpeed = .5;
-    double drivespeed = .6;
+    double TurnSpeed = .4;
+    double drivespeed = .4;
 
     //servo positions
 
@@ -67,6 +73,8 @@ public class drive1 extends LinearOpMode{
         BackRightmotor = hardwareMap.get(DcMotorEx.class, "BackRightmotor");
         FrontRightmotor = hardwareMap.get(DcMotorEx.class, "FrontRightmotor");
         Lift1 = hardwareMap.get(DcMotorEx.class, "Lift1");
+        Intake = hardwareMap.get(DcMotorEx.class, "Intake");
+        Hang = hardwareMap.get(DcMotorEx.class,"Hang");
        // Lift2 = hardwareMap.get(DcMotorEx.class, "Lift2");
 
 
@@ -76,6 +84,8 @@ public class drive1 extends LinearOpMode{
         BackRightmotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         FrontRightmotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         Lift1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        Intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        Hang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //Lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
@@ -85,19 +95,26 @@ public class drive1 extends LinearOpMode{
         BackRightmotor.setDirection(DcMotorEx.Direction.REVERSE);
         FrontRightmotor.setDirection(DcMotorEx.Direction.REVERSE);
         Lift1.setDirection(DcMotorEx.Direction.FORWARD);
+        Intake.setDirection(DcMotorEx.Direction.FORWARD);
+        Hang.setDirection(DcMotorSimple.Direction.FORWARD);
         //Lift2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //getting servos
         Servo1 = hardwareMap.get(Servo.class,"Servo1");
         Servo2 = hardwareMap.get(Servo.class,"Servo2");
+        Servo3 = hardwareMap.get(Servo.class,"Servo3");
+        Servo4 = hardwareMap.get(Servo.class,"Servo4");
 
         //servo directions
         Servo1.setDirection(Servo.Direction.FORWARD);
         Servo2.setDirection(Servo.Direction.REVERSE);
+        Servo3.setDirection(Servo.Direction.REVERSE);
+        Servo4.setDirection(Servo.Direction.REVERSE);
 
         //init
-        Servo1.setPosition(.9);
-        Servo2.setPosition(.9);
+        Servo1.setPosition(.1);
+       Servo2.setPosition(.1);
+        // Servo3.setPosition(.9);
 
         waitForStart();
         runtime.reset();
@@ -109,17 +126,32 @@ public class drive1 extends LinearOpMode{
             if(gamepad2.a){
                 Servo1.setPosition(.1);
                 Servo2.setPosition(.1);
+               // Servo4.setPosition(.1);
             }
             else{
                 Servo1.setPosition(.9);
                 Servo2.setPosition(.9);
+
+
+            }
+            if(gamepad1.a) {
+                Servo3.setPosition(.1);
+            }
+            else {
+                Servo3.setPosition(.9);
             }
 
+            if(gamepad2.x) {
+                Servo4.setPosition(.1);
+            }
+            else {
+                Servo4.setPosition(.9);
+            }
 
-
-
+            Intake.setPower(gamepad2.right_trigger * -1);
+            Intake.setPower(gamepad2.left_trigger * 1);
             Lift1.setPower(gamepad2.left_stick_y * -1);
-            //Lift2.setPower(gamepad2.left_stick_y *-1);
+            Hang.setPower(gamepad2.right_stick_y * -1 );
 
             //drive
             BackLeftmotor.setPower(((gamepad1.right_trigger - gamepad1.left_trigger) * TurnSpeed) - (gamepad1.left_stick_y + gamepad1.right_stick_x)*(drivespeed));
@@ -127,6 +159,7 @@ public class drive1 extends LinearOpMode{
             BackRightmotor.setPower(((gamepad1.right_trigger - gamepad1.left_trigger) * TurnSpeed) + (gamepad1.left_stick_y - gamepad1.right_stick_x)*(drivespeed));
             FrontRightmotor.setPower(((gamepad1.right_trigger - gamepad1.left_trigger) * TurnSpeed) + (gamepad1.left_stick_y + gamepad1.right_stick_x)*(drivespeed));
             //end of drive
+
         }
     }
 }
