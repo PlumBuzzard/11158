@@ -25,6 +25,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -42,9 +43,9 @@ public class drive1 extends LinearOpMode {
     DcMotorEx BackLeftmotor;
     DcMotorEx BackRightmotor;
     DcMotorEx Lift1;
-    DcMotorEx Intake;
-     DcMotorEx Intake3;
-    //DcMotorEx Hang;
+
+    DcMotorEx Lift2;
+    DcMotorEx Intake1;
     DcMotorEx Intake2;
 
     //Servos
@@ -61,8 +62,8 @@ public class drive1 extends LinearOpMode {
 
 
     //speed variables
-    double TurnSpeed = .4;
-    double drivespeed = .5;
+    double TurnSpeed = 1;
+    double drivespeed = 1;
 
 
     //servo positions
@@ -75,10 +76,9 @@ public class drive1 extends LinearOpMode {
         BackRightmotor = hardwareMap.get(DcMotorEx.class, "BackRightmotor");
         FrontRightmotor = hardwareMap.get(DcMotorEx.class, "FrontRightmotor");
         Lift1 = hardwareMap.get(DcMotorEx.class, "Lift1");
-        Intake = hardwareMap.get(DcMotorEx.class, "Intake");
+        Lift2 = hardwareMap.get(DcMotorEx.class, "Lift2");
+        Intake1 = hardwareMap.get(DcMotorEx.class,"Intake1");
         Intake2 = hardwareMap.get(DcMotorEx.class,"Intake2");
-        //Hang = hardwareMap.get(DcMotorEx.class, "Hang");
-        Intake3 = hardwareMap.get(DcMotorEx.class, "Intake3");
 
 
         BackRightmotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -86,10 +86,8 @@ public class drive1 extends LinearOpMode {
         BackRightmotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         FrontRightmotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         Lift1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        Intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        Lift2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         Intake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //Hang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Intake3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         //motor directions
@@ -98,10 +96,10 @@ public class drive1 extends LinearOpMode {
         BackRightmotor.setDirection(DcMotorEx.Direction.REVERSE);
         FrontRightmotor.setDirection(DcMotorEx.Direction.REVERSE);
         Lift1.setDirection(DcMotorEx.Direction.FORWARD);
-        Intake.setDirection(DcMotorEx.Direction.FORWARD);
-        Intake2.setDirection(DcMotorSimple.Direction.FORWARD);
-        //Hang.setDirection(DcMotorSimple.Direction.FORWARD);
-        Intake3.setDirection(DcMotorSimple.Direction.FORWARD);
+        Lift2.setDirection(DcMotorEx.Direction.FORWARD);
+        Intake1.setDirection(DcMotor.Direction.FORWARD);
+        Intake2.setDirection(DcMotor.Direction.FORWARD);
+
 
         //getting servos
         Servo1 = hardwareMap.get(Servo.class, "Servo1");
@@ -113,13 +111,9 @@ public class drive1 extends LinearOpMode {
         // Servo1.setDirection(Servo.Direction.REVERSE);
         Servo1.setDirection(Servo.Direction.FORWARD);
         Servo2.setDirection(Servo.Direction.REVERSE);
-        Servo3.setDirection(Servo.Direction.REVERSE);
+        Servo3.setDirection(Servo.Direction.FORWARD);
         Servo4.setDirection(Servo.Direction.REVERSE);
 
-        //init
-       // Servo1.setPosition(-1);
-       // Servo2.setPosition(1);
-        // Servo3.setPosition(.9);
 
         waitForStart();
         runtime.reset();
@@ -134,42 +128,41 @@ public class drive1 extends LinearOpMode {
             else {
 
                 Servo1.setPosition(1);
-
             }
-
-           /* if (gamepad2.a) {
-            Servo2.setPosition(-1);
-            Servo3.setPosition(1);
-           }
-            else{
-                Servo2.setPosition(1);
-                Servo3.setPosition(-1);
-            }
-            */
             //Plane
-            if (gamepad2.b){
-                Servo4.setPosition(1);
+            if (gamepad2.x){
+                Servo2.setPosition(1);
             }
             else {
-                Servo4.setPosition(-1);
+                Servo2.setPosition(-1);
             }
-                //Hang.setPower(gamepad2.left_trigger * -1);
+            // stopper
+            if (gamepad1.a){
+                Servo3.setPosition(1);
+            } else if (gamepad1.y) {
+                Servo3.setPosition(-1);
+            }
+
+            //Hang.setPower(gamepad2.left_trigger * -1);
                // Hang.setPower(gamepad2.right_trigger * 1);
                 Lift1.setPower(gamepad2.left_stick_y * -1);
-                Intake.setPower(gamepad2.right_stick_y * 0.35);
-                Intake2.setPower(gamepad2.right_stick_y * -1);
-                Intake3.setPower(gamepad2.right_stick_y * -1);
+                Lift2.setPower(gamepad2.left_stick_y * -1);
+                Intake1.setPower(gamepad2.right_stick_y * 1);
+                Intake2.setPower(gamepad2.right_stick_y* 1);
+
+
 
 
                 //drive
-                BackLeftmotor.setPower(((gamepad1.right_trigger - gamepad1.left_trigger) * TurnSpeed) - (gamepad1.left_stick_y + gamepad1.right_stick_x)*(drivespeed));
-                FrontLeftmotor.setPower(((gamepad1.right_trigger - gamepad1.left_trigger) * TurnSpeed) - (gamepad1.left_stick_y - gamepad1.right_stick_x)*(drivespeed));
-                BackRightmotor.setPower(((gamepad1.right_trigger - gamepad1.left_trigger) * TurnSpeed) + (gamepad1.left_stick_y - gamepad1.right_stick_x)*(drivespeed));
-                FrontRightmotor.setPower(((gamepad1.right_trigger - gamepad1.left_trigger) * TurnSpeed) + (gamepad1.left_stick_y + gamepad1.right_stick_x)*(drivespeed));
+            BackLeftmotor.setPower(((gamepad1.right_trigger - gamepad1.left_trigger) * TurnSpeed) - (gamepad1.left_stick_y + gamepad1.right_stick_x)*(drivespeed));
+            FrontLeftmotor.setPower(((gamepad1.right_trigger - gamepad1.left_trigger) * TurnSpeed) - (gamepad1.left_stick_y - gamepad1.right_stick_x)*(drivespeed));
+            BackRightmotor.setPower(((gamepad1.right_trigger - gamepad1.left_trigger) * TurnSpeed) + (gamepad1.left_stick_y - gamepad1.right_stick_x)*(drivespeed));
+            FrontRightmotor.setPower(((gamepad1.right_trigger - gamepad1.left_trigger) * TurnSpeed) + (gamepad1.left_stick_y + gamepad1.right_stick_x)*(drivespeed));
                 //end of drive
 
 
+        }
             }
 
         }
-    }
+

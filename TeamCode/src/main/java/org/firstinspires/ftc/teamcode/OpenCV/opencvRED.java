@@ -26,7 +26,9 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -47,7 +49,7 @@ import java.util.List;
 public class opencvRED extends LinearOpMode {
 
     //not camera stuff
-    DcMotorEx BLmotor, BRmotor, FLmotor, FRmotor, Xrail, Xrail2;
+    DcMotorEx BLmotor, BRmotor, FLmotor, FRmotor, Xrail,Xrail2,Intake1;
     Servo Servo1, Servo2,Servo3,Servo4;
     ColorSensor colorSensor;
     double Kp = 0.05; // adjust as needed
@@ -56,7 +58,7 @@ public class opencvRED extends LinearOpMode {
     double width = 0;
 
     //double TicksPerRevolution = 537.7;
-    //mine below
+    //mine belo
     double TicksPerRevolution = 10321.44;
     // diameter Millimeters
     double DiameterMM = 96;
@@ -96,6 +98,7 @@ public class opencvRED extends LinearOpMode {
         FRmotor = hardwareMap.get(DcMotorEx.class, "FrontRightmotor");
         Xrail = hardwareMap.get(DcMotorEx.class, "Lift1");
         Xrail2 = hardwareMap.get(DcMotorEx.class, "Lift2");
+        Intake1 = hardwareMap.get(DcMotorEx.class, "Intake3");
         //stops motors when not moving
         BLmotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         FLmotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -103,6 +106,7 @@ public class opencvRED extends LinearOpMode {
         FRmotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         Xrail.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         Xrail2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        Intake1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //motor directions
         BLmotor.setDirection(DcMotorEx.Direction.REVERSE);
         FLmotor.setDirection(DcMotorEx.Direction.REVERSE);
@@ -110,6 +114,7 @@ public class opencvRED extends LinearOpMode {
         FRmotor.setDirection(DcMotorEx.Direction.FORWARD);
         Xrail.setDirection(DcMotorEx.Direction.FORWARD);
         Xrail2.setDirection(DcMotorEx.Direction.FORWARD);
+        Intake1.setDirection(DcMotorSimple.Direction.FORWARD);
         //getting servos
         Servo1 = hardwareMap.get(Servo.class, "Servo1");
         Servo2 = hardwareMap.get(Servo.class, "Servo2");
@@ -568,32 +573,32 @@ public class opencvRED extends LinearOpMode {
             double wDist = Xrail.getCurrentPosition() + distance;
             double wDist2 = Xrail2.getCurrentPosition() + distance;
 
-//        Xrail2.setTargetPosition(Xrail2.getCurrentPosition() + distance);
-//        Xrail.setTargetPosition(Xrail.getCurrentPosition() + distance);
+    Xrail2.setTargetPosition(Xrail2.getCurrentPosition() + distance);
+       Xrail.setTargetPosition(Xrail.getCurrentPosition() + distance);
 
 
 
             Xrail.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
             Xrail2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-//        Xrail2.setPower(power);
-//        Xrail.setPower(power);
+      Xrail2.setPower(power);
+        Xrail.setPower(power);
 
 
 
             while (opModeIsActive() && (Math.abs(Xrail.getCurrentPosition() - wDist) > 20)) {
                 Xrail.setPower((Xrail.getCurrentPosition() - wDist) * 0.1);
-                Xrail2.setPower((Xrail2.getCurrentPosition() - wDist2) * 0.1);
+               Xrail2.setPower((Xrail2.getCurrentPosition() - wDist2) * 0.1);
                 telemetry.addData("Arm Position", Xrail.getCurrentPosition());
                 telemetry.addData("Arm Positoin 2 ", Xrail2.getCurrentPosition());
                 telemetry.update();
             }
 
-            Xrail.setPower(0);
-            Xrail2.setPower(0);
+           // Xrail.setPower(0);
+           // Xrail2.setPower(0);
 
-            Xrail.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            Xrail2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+           // Xrail.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+           // Xrail2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 
         }
