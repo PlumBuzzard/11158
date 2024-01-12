@@ -49,8 +49,8 @@ import java.util.List;
 public class opencvRED extends LinearOpMode {
 
     //not camera stuff
-    DcMotorEx BLmotor, BRmotor, FLmotor, FRmotor, Xrail,Xrail2,Intake1;
-    Servo Servo1, Servo2,Servo3,Servo4;
+    DcMotorEx BLmotor, BRmotor, FLmotor, FRmotor, Xrail,Xrail2,Intake2,Intake1;
+    Servo Servo1, Servo2,Servo3,Servo4,Servo5;
     ColorSensor colorSensor;
     double Kp = 0.05; // adjust as needed
     double cX = 0;
@@ -98,7 +98,8 @@ public class opencvRED extends LinearOpMode {
         FRmotor = hardwareMap.get(DcMotorEx.class, "FrontRightmotor");
         Xrail = hardwareMap.get(DcMotorEx.class, "Lift1");
         Xrail2 = hardwareMap.get(DcMotorEx.class, "Lift2");
-        Intake1 = hardwareMap.get(DcMotorEx.class, "Intake3");
+        Intake1 = hardwareMap.get(DcMotorEx.class, "Intake1");
+        Intake2 = hardwareMap.get(DcMotorEx.class,"Intake2");
         //stops motors when not moving
         BLmotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         FLmotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -107,6 +108,7 @@ public class opencvRED extends LinearOpMode {
         Xrail.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         Xrail2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         Intake1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Intake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //motor directions
         BLmotor.setDirection(DcMotorEx.Direction.REVERSE);
         FLmotor.setDirection(DcMotorEx.Direction.REVERSE);
@@ -115,12 +117,13 @@ public class opencvRED extends LinearOpMode {
         Xrail.setDirection(DcMotorEx.Direction.FORWARD);
         Xrail2.setDirection(DcMotorEx.Direction.FORWARD);
         Intake1.setDirection(DcMotorSimple.Direction.FORWARD);
+        Intake2.setDirection(DcMotorSimple.Direction.FORWARD);
         //getting servos
         Servo1 = hardwareMap.get(Servo.class, "Servo1");
         Servo2 = hardwareMap.get(Servo.class, "Servo2");
         Servo3 = hardwareMap.get(Servo.class, "Servo3");
         Servo4 = hardwareMap.get(Servo.class, "Servo4");
-
+        Servo5 = hardwareMap.get(Servo.class, "Servo5");
         //colorSensor = hardwareMap.colorSensor.get("color_sensor");
 
         //servo directions
@@ -203,15 +206,17 @@ public class opencvRED extends LinearOpMode {
 
                 if (cX < CAMERA_WIDTH / 2 - 50) {
                     // If the centroid is significantly to the left of the screen center, turn the robot left
-                    TurnLeft(50,45);
-                    sleep(1000);
+                    //TurnLeft(0.5,15);
+                    //sleep(1000);
                 } else if (cX > CAMERA_WIDTH / 2 + 50) {
                     // If the centroid is significantly to the right of the screen center, turn the robot right
-                    TurnRight(50,45);
-                    sleep(1000);
+                    //TurnRight(0.5,15);
+                    //sleep(1000);
                 } else {
                     // If the centroid is close to the center, move the robot forward
-                    forward(50,15);
+                    Sright(0.5 ,3);
+                    forward(0.5,2);
+
                     sleep(1000);
                 }
 
@@ -304,20 +309,20 @@ public class opencvRED extends LinearOpMode {
             BRmotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             BLmotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-            FRmotor.setTargetPosition(distance);
-            FLmotor.setTargetPosition(-distance);
-            BRmotor.setTargetPosition(-distance);
-            BLmotor.setTargetPosition(distance);
+            FRmotor.setTargetPosition(-distance);
+            FLmotor.setTargetPosition(distance);
+            BRmotor.setTargetPosition(distance);
+            BLmotor.setTargetPosition(-distance);
 
             FRmotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             FLmotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             BRmotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             BLmotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-            FRmotor.setPower(power);
-            FLmotor.setPower(-power);
-            BRmotor.setPower(-power);
-            BLmotor.setPower(power);
+            FRmotor.setPower(-power);
+            FLmotor.setPower(power);
+            BRmotor.setPower(power);
+            BLmotor.setPower(-power);
 
             while (FRmotor.isBusy() &&
                     FLmotor.isBusy() && BRmotor.isBusy() && BLmotor.isBusy()) {
@@ -342,20 +347,20 @@ public class opencvRED extends LinearOpMode {
             BRmotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             BLmotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-            FRmotor.setTargetPosition(-distance);
-            FLmotor.setTargetPosition(distance);
-            BRmotor.setTargetPosition(distance);
-            BLmotor.setTargetPosition(-distance);
+            FRmotor.setTargetPosition(distance);
+            FLmotor.setTargetPosition(-distance);
+            BRmotor.setTargetPosition(-distance);
+            BLmotor.setTargetPosition(distance);
 
             FRmotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             FLmotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             BRmotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             BLmotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-            FRmotor.setPower(-power);
-            FLmotor.setPower(power);
-            BRmotor.setPower(power);
-            BLmotor.setPower(-power);
+            FRmotor.setPower(power);
+            FLmotor.setPower(-power);
+            BRmotor.setPower(-power);
+            BLmotor.setPower(power);
 
             while (FRmotor.isBusy() &&
                     FLmotor.isBusy() && BRmotor.isBusy() && BLmotor.isBusy()) {

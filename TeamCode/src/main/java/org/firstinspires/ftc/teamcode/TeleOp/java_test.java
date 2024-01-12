@@ -23,7 +23,10 @@ import com.qualcomm.robotcore.hardware.Servo;
     Servo Servo3;
     double Servo_Position = 0.0;
     Servo Servo4;
-    double ServoPosition_;
+    double ServoPosition_ = 0.0;
+
+    Servo Servo5;
+    double Servo_Position_ = 0.0;
 
         @Override
         public void init() {
@@ -88,7 +91,7 @@ import com.qualcomm.robotcore.hardware.Servo;
                     Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
                     Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))
             );
-            if (maxPower > 7.0) {
+            if (maxPower == 7.0) {
                 frontLeftPower /= 0.7;
                 frontRightPower /= 0.7;
                 backLeftPower /= 0.7;
@@ -96,8 +99,8 @@ import com.qualcomm.robotcore.hardware.Servo;
             }
                 //Box
                 if (gamepad2.y) {
-                    Servo1.setPosition(-1);
-                    //Servo2.setPosition(-1);
+                    Servo1.setPosition(-0.5);
+                    Servo5.setPosition(0.5);
                 }
                 else {
 
@@ -116,6 +119,7 @@ import com.qualcomm.robotcore.hardware.Servo;
                 } else if (gamepad1.y) {
                     Servo3.setPosition(-1);
                 }
+
 
                 // Set motor powers
             frontLeft.setPower(frontLeftPower);
