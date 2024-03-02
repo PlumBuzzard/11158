@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="test1", group="Controlled")
+@TeleOp(name="Drive", group="Controlled")
     public class java_test extends OpMode {
 
         private DcMotor frontLeft, frontRight, backLeft, backRight,Lift1,Lift2,Intake2,Intake1;
@@ -25,11 +25,10 @@ import com.qualcomm.robotcore.hardware.Servo;
     Servo Servo4;
     double ServoPosition_ = 0.0;
 
-    Servo Servo5;
-    double Servo_Position_ = 0.0;
 
         @Override
         public void init() {
+
             frontLeft = hardwareMap.dcMotor.get("FrontLeftmotor");
             frontRight = hardwareMap.dcMotor.get("FrontRightmotor");
             backLeft = hardwareMap.dcMotor.get("BackLeftmotor");
@@ -71,14 +70,21 @@ import com.qualcomm.robotcore.hardware.Servo;
             Lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             Intake2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             Intake1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            //int
+
         }
 
         @Override
         public void loop() {
+
+
+
             // Gamepad inputs
             double drive = -gamepad1.left_stick_y;
-            double strafe = gamepad1.left_stick_x;
-            double rotate = gamepad1.right_stick_x;
+            double strafe = gamepad1.right_stick_x;
+            double rotate = gamepad1.right_trigger - gamepad1.left_trigger;
+
 
             // Calculate motor powers
             double frontLeftPower = drive + strafe + rotate;
@@ -86,25 +92,48 @@ import com.qualcomm.robotcore.hardware.Servo;
             double backLeftPower = drive - strafe + rotate;
             double backRightPower = drive + strafe - rotate;
 
+
+            double speedReductionFactor = 0.6;  // Adjust this value based on how much you want to slow down
+
+            double maxPower = Math.max(
+                    Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
+                    Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))
+            );
+
+// Check if maxPower is greater than 0 to avoid division by zero
+            if (maxPower > 0) {
+                // Normalize the power values by dividing by maxPower, then apply the speed reduction factor
+                frontLeftPower = (frontLeftPower / maxPower) * speedReductionFactor;
+                frontRightPower = (frontRightPower / maxPower) * speedReductionFactor;
+                backLeftPower = (backLeftPower / maxPower) * speedReductionFactor;
+                backRightPower = (backRightPower / maxPower) * speedReductionFactor;
+            }
+
+/*
             // Normalize motor powers
             double maxPower = Math.max(
                     Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
                     Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))
             );
-            if (maxPower == 7.0) {
-                frontLeftPower /= 0.7;
-                frontRightPower /= 0.7;
-                backLeftPower /= 0.7;
-                backRightPower /= 0.7;
+            if (maxPower == 0.3) {
+                frontLeftPower /= 0.3;
+                frontRightPower /= 0.3;
+                backLeftPower /= 0.3;
+                backRightPower /= 0.3;
             }
+
+
+
+ */
                 //Box
                 if (gamepad2.y) {
                     Servo1.setPosition(-0.5);
-                    Servo5.setPosition(0.5);
+                    Servo4.setPosition(-0.5);
                 }
                 else {
 
-                    Servo1.setPosition(1);
+                    Servo1.setPosition(0.5);
+                    Servo4.setPosition(0.5);
                 }
                 //Plane
                 if (gamepad2.x){
@@ -121,16 +150,26 @@ import com.qualcomm.robotcore.hardware.Servo;
                 }
 
 
-                // Set motor powers
-            frontLeft.setPower(frontLeftPower);
-            frontRight.setPower(frontRightPower);
-            backLeft.setPower(backLeftPower);
-            backRight.setPower(backRightPower);
+                // Set motor power
+            frontLeft.setPower(-frontLeftPower);
+            frontRight.setPower(-frontRightPower);
+            backLeft.setPower(-backLeftPower);
+            backRight.setPower(-backRightPower);
 
             Lift1.setPower(gamepad2.left_stick_y * -1);
             Lift2.setPower(gamepad2.left_stick_y * -1);
-            Intake1.setPower(gamepad2.right_stick_y * 1);
-            Intake2.setPower(gamepad2.right_stick_y* 1);
+            Intake1.setPower(gamepad2.right_stick_y * 0.50);
+
+            // Assuming Intake2 is used for some form of linear movement (e.g., controlling a motor or servo)
+            double leftTriggerValue = gamepad2.left_trigger;
+            double rightTriggerValue = gamepad2.right_trigger;
+
+            // Calculate the combined movement by subtracting the right trigger value from the left trigger value
+            double combinedMovement = rightTriggerValue - leftTriggerValue;
+
+            // Set the power or control the movement based on the combined trigger values
+            Intake2.setPower(combinedMovement);
+
 
         }
     }

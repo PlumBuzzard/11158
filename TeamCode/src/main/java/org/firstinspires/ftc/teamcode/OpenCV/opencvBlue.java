@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.firstinspires.ftc.teamcode.OpModes.OpenCV;
+package org.firstinspires.ftc.teamcode.OpenCV;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -44,9 +44,9 @@ import static java.lang.Math.PI;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "Red Farside")
+@Autonomous(name = "Blue farside")
 
-public class opencvRED extends LinearOpMode {
+public class opencvBlue extends LinearOpMode {
 
     //not camera stuff
     DcMotorEx BLmotor, BRmotor, FLmotor, FRmotor, Xrail,Xrail2,Intake2,Intake1;
@@ -213,37 +213,60 @@ public class opencvRED extends LinearOpMode {
 
                 if (cX < CAMERA_WIDTH / 2 - 50) {
                     // If the centroid is significantly to the left of the screen center, turn the robot left
-                    forward(0.3,2);
-                    Sleft(0.3,4);
-                    forward(0.3,15);
+                    forward(0.3,16);
+                    TurnRight(0.3,23);
+                    forward(0.2,4);
                     sleep(100);
-                    backwards(0.3,3);
-                    Sleft(0.3,9);
-                    sleep(100);
-                    forward(0.3,20);
-                    TurnRight(0.3,40);
-                    backwards(0.5,74);
+                    backwards(0.2,4);
+                    TurnLeft(0.3,23);
+                    backwards(0.3,16);
+                    sleep(1000);
+                    Sright(0.3,8);
+                    sleep(1000);
+                    forward(0.5,40);
+                    TurnLeft(0.3,20);
+                    forward(0.5,74);
                     sleep(100);
                     requestOpModeStop();
                 } else if (cX > CAMERA_WIDTH / 2 + 50) {
                     // If the centroid is significantly to the right of the screen center, turn the robot right
-
-
+                    forward(0.3,2);
+                    Sright(0.3,10);
+                    forward(0.3,15);
+                    sleep(100);
+                    backwards(0.3,3);
+                    Sright(0.3,10);
+                    sleep(100);
+                    forward(0.3,20);
+                    TurnLeft(0.3,20);
+                    forward(0.5,74);
+                    sleep(100);
+                    requestOpModeStop();
                 } else {
                     // If the centroid is close to the center, move the robot forward
                     forward(0.3,20);
                     sleep(100);
                     backwards(0.3,3);
-                    Sleft(0.3,10);
+                    Sright(0.3,10);
                     sleep(100);
                     forward(0.3,20);
-                    TurnRight(0.3,23);
+                    TurnLeft(0.3,20);
                     forward(0.5,74);
                     sleep(100);
+                    /*
+                    Sright(0.3,20);
+                    sleep(100);
+                    TurnRight(0.5,43);
+                   sleep(100);
+                   backwards(0.2,4);
+                   Lift(-0.8);
+                   sleep(8000);
+                   stopLift();
+                   Servo1.setPosition(0.5); // Adjust position as needed
+                    sleep(1000);
 
 
-
-
+                     */
                     requestOpModeStop();
                 }
 
@@ -607,17 +630,17 @@ public class opencvRED extends LinearOpMode {
         }
     }
 
-        // Method to lift up
-        private void Lift(double power) {
-            Xrail2.setPower(power);
-            Xrail.setPower(power);
-        }
+    // Method to lift up
+    private void Lift(double power) {
+        Xrail2.setPower(power);
+        Xrail.setPower(power);
+    }
 
-        // Method to stop the lift
-        private void stopLift() {
-            Xrail2.setPower(0);
-            Xrail.setPower(0);
-        }
+    // Method to stop the lift
+    private void stopLift() {
+        Xrail2.setPower(0);
+        Xrail.setPower(0);
+    }
         /*
         private void Lift(double inches, double power) {
             int targetPosition = (int) (inches * COUNTS_PER_INCH);
@@ -674,43 +697,43 @@ public class opencvRED extends LinearOpMode {
  */
 
 
-        //RED
-        private Mat preprocessFrame(Mat frame) {
-            Mat hsvFrame = new Mat();
-            Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
+    //RED
+    private Mat preprocessFrame(Mat frame) {
+        Mat hsvFrame = new Mat();
+        Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
 
-            Scalar lowerYellow = new Scalar(0, 100, 100);
-            Scalar upperYellow = new Scalar(100, 255, 255);
+        Scalar lowerYellow = new Scalar(100, 100);
+        Scalar upperYellow = new Scalar(240, 255, 255);
 
 
-            Mat yellowMask = new Mat();
-            Core.inRange(hsvFrame, lowerYellow, upperYellow, yellowMask);
+        Mat yellowMask = new Mat();
+        Core.inRange(hsvFrame, lowerYellow, upperYellow, yellowMask);
 
-            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
-            Imgproc.morphologyEx(yellowMask, yellowMask, Imgproc.MORPH_OPEN, kernel);
-            Imgproc.morphologyEx(yellowMask, yellowMask, Imgproc.MORPH_CLOSE, kernel);
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
+        Imgproc.morphologyEx(yellowMask, yellowMask, Imgproc.MORPH_OPEN, kernel);
+        Imgproc.morphologyEx(yellowMask, yellowMask, Imgproc.MORPH_CLOSE, kernel);
 
-            return yellowMask;
-        }
+        return yellowMask;
+    }
 
-        private MatOfPoint findLargestContour(List<MatOfPoint> contours) {
-            double maxArea = 0;
-            MatOfPoint largestContour = null;
+    private MatOfPoint findLargestContour(List<MatOfPoint> contours) {
+        double maxArea = 0;
+        MatOfPoint largestContour = null;
 
-            for (MatOfPoint contour : contours) {
-                double area = Imgproc.contourArea(contour);
-                if (area > maxArea) {
-                    maxArea = area;
-                    largestContour = contour;
-                }
+        for (MatOfPoint contour : contours) {
+            double area = Imgproc.contourArea(contour);
+            if (area > maxArea) {
+                maxArea = area;
+                largestContour = contour;
             }
+        }
 
-            return largestContour;
-        }
-        private double calculateWidth(MatOfPoint contour) {
-            Rect boundingRect = Imgproc.boundingRect(contour);
-            return boundingRect.width;
-        }
+        return largestContour;
+    }
+    private double calculateWidth(MatOfPoint contour) {
+        Rect boundingRect = Imgproc.boundingRect(contour);
+        return boundingRect.width;
+    }
 
 
     private static double getDistance(double width){
